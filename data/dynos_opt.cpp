@@ -635,9 +635,6 @@ void DynOS_Opt_Init() {
     // Exit level
     DynOS_Opt_CreateButton("dynos_exit_level", "Exit Level", "DynOS_Opt_ExitLevel");
 
-    // Return to main menu
-    DynOS_Opt_CreateButton("dynos_return_to_main_menu", "Return to Main Menu", "DynOS_Opt_ReturnToMainMenu");
-
     // Model loader
     DynOS_Opt_CreateModelPacksSubMenu();
 
