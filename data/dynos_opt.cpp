@@ -648,13 +648,6 @@ void DynOS_Opt_Init() {
 
 void DynOS_Opt_Update(OSContPad *aPad) {
     DynOS_Opt_Loop(sDynosMenu, DynOS_Opt_ControllerUpdate, (void *) aPad);
-    if (DynOS_IsTransitionActive()) {
-        aPad->button = 0;
-        aPad->stick_x = 0;
-        aPad->stick_y = 0;
-        aPad->ext_stick_x = 0;
-        aPad->ext_stick_y = 0;
-    }
 }
 
 //
