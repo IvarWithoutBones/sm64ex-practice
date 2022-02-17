@@ -1158,109 +1158,107 @@ void time_trials_update(bool isPaused) {
     static s16 sLoadedCourseNum = -1;
     static s16 sLoadedStarIndex = -1;
     if (time_trials_get_slot_index(gCurrCourseNum, 0) != -1) {
-        if (sTimeTrialTimerState != TT_TIMER_STOPPED) {
-            sTimeTrialTimerState = TT_TIMER_RUNNING;
-            sTimeTrialHiScore = false;
+        sTimeTrialTimerState = TT_TIMER_RUNNING;
+        sTimeTrialHiScore = false;
 
-            // Start timer and init ghost if a course entry is detected
-            if (time_trials_should_start_timer(gMarioState)) {
-                bzero(sTimeTrialGhostDataW, sizeof(sTimeTrialGhostDataW));
-                sTimeTrialTimer = 0;
+        // Start timer and init ghost if a course entry is detected
+        if (time_trials_should_start_timer(gMarioState)) {
+            bzero(sTimeTrialGhostDataW, sizeof(sTimeTrialGhostDataW));
+            sTimeTrialTimer = 0;
 
-                // Load ghosts only if not already loaded
-                s32 starIndex = time_trials_get_ghost_data_to_load(gCurrCourseNum, gCurrActNum - 1);
-                if ((sLoadedSvFileNum != gCurrSaveFileNum) || (sLoadedCourseNum != gCurrCourseNum) || (sLoadedStarIndex != starIndex)) {
+            // Load ghosts only if not already loaded
+            s32 starIndex = time_trials_get_ghost_data_to_load(gCurrCourseNum, gCurrActNum - 1);
+            if ((sLoadedSvFileNum != gCurrSaveFileNum) || (sLoadedCourseNum != gCurrCourseNum) || (sLoadedStarIndex != starIndex)) {
 
-                    // Default ghost (blue)
-                    // All Stars ghost (pink)
-                    if (OMM_STARS_NON_STOP && gCurrCourseNum >= COURSE_BOB && gCurrCourseNum <= COURSE_RR) {
-                        starIndex = 7;
-                    }
-                    s32 slotIndex = time_trials_get_slot_index(gCurrCourseNum, starIndex);
-                    time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, starIndex, slotIndex, sTimeTrialGhostDataR1);
-                    sGhostAnimData1.color = (starIndex == 7 ? GHOST_MARIO_ALL_STARS : GHOST_MARIO_DEFAULT);
-                    sGhostAnimData1.prevValidAnimIndex = 0xFFFF;
+                // Default ghost (blue)
+                // All Stars ghost (pink)
+                if (OMM_STARS_NON_STOP && gCurrCourseNum >= COURSE_BOB && gCurrCourseNum <= COURSE_RR) {
+                    starIndex = 7;
+                }
+                s32 slotIndex = time_trials_get_slot_index(gCurrCourseNum, starIndex);
+                time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, starIndex, slotIndex, sTimeTrialGhostDataR1);
+                sGhostAnimData1.color = (starIndex == 7 ? GHOST_MARIO_ALL_STARS : GHOST_MARIO_DEFAULT);
+                sGhostAnimData1.prevValidAnimIndex = 0xFFFF;
 
-                    // Special ghost
-                    // Bowser Red coins (red)
-                    // PSS 2 (green)
-                    // 100 coins (gold)
-                    s32 specialIndex = time_trials_get_special_ghost_data_to_load(gCurrCourseNum);
-                    if (specialIndex != -1) {
-                        slotIndex = time_trials_get_slot_index(gCurrCourseNum, specialIndex);
-                        time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, specialIndex, slotIndex, sTimeTrialGhostDataR2);
-                        if (specialIndex == 0) sGhostAnimData2.color = GHOST_MARIO_RED_COINS;
-                        if (specialIndex == 1) sGhostAnimData2.color = GHOST_MARIO_PSS_2;
-                        if (specialIndex == 6) sGhostAnimData2.color = GHOST_MARIO_100_COINS;
-                        sGhostAnimData2.prevValidAnimIndex = 0xFFFF;
-                    }
+                // Special ghost
+                // Bowser Red coins (red)
+                // PSS 2 (green)
+                // 100 coins (gold)
+                s32 specialIndex = time_trials_get_special_ghost_data_to_load(gCurrCourseNum);
+                if (specialIndex != -1) {
+                    slotIndex = time_trials_get_slot_index(gCurrCourseNum, specialIndex);
+                    time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, specialIndex, slotIndex, sTimeTrialGhostDataR2);
+                    if (specialIndex == 0) sGhostAnimData2.color = GHOST_MARIO_RED_COINS;
+                    if (specialIndex == 1) sGhostAnimData2.color = GHOST_MARIO_PSS_2;
+                    if (specialIndex == 6) sGhostAnimData2.color = GHOST_MARIO_100_COINS;
+                    sGhostAnimData2.prevValidAnimIndex = 0xFFFF;
+                }
 
-                    sLoadedSvFileNum = gCurrSaveFileNum;
-                    sLoadedCourseNum = gCurrCourseNum;
-                    sLoadedStarIndex = starIndex;
+                sLoadedSvFileNum = gCurrSaveFileNum;
+                sLoadedCourseNum = gCurrCourseNum;
+                sLoadedStarIndex = starIndex;
+            }
+        }
+
+        // Stop timer and save time when Mario collects a star
+        struct MarioState *m = gMarioState;
+        if (m->action == ACT_STAR_DANCE_EXIT ||
+            m->action == ACT_STAR_DANCE_NO_EXIT ||
+            m->action == ACT_STAR_DANCE_WATER ||
+            m->action == ACT_FALL_AFTER_STAR_GRAB ||
+            m->action == ACT_JUMBO_STAR_CUTSCENE) {
+
+            // Force Mario to leave the course if he collects a main course star
+            // Ignore this if OMM Non-Stop mode is enabled
+            if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_STAGES_MAX) {
+                if (!OMM_STARS_NON_STOP || OMM_ALL_STARS) {
+                    drop_queued_background_music();
+                    fadeout_level_music(126);
+                    m->actionArg = 0;
                 }
             }
 
-            // Stop timer and save time when Mario collects a star
-            struct MarioState *m = gMarioState;
-            if (m->action == ACT_STAR_DANCE_EXIT ||
-                m->action == ACT_STAR_DANCE_NO_EXIT ||
-                m->action == ACT_STAR_DANCE_WATER ||
-                m->action == ACT_FALL_AFTER_STAR_GRAB ||
-                m->action == ACT_JUMBO_STAR_CUTSCENE) {
+            // Save the time
+            if (sTimeTrialTimerState == TT_TIMER_RUNNING) {
+                s32 starIndex = gLastCompletedStarNum - 1;
 
-                // Force Mario to leave the course if he collects a main course star
-                // Ignore this if OMM Non-Stop mode is enabled
-                if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_STAGES_MAX) {
-                    if (!OMM_STARS_NON_STOP || OMM_ALL_STARS) {
-                        drop_queued_background_music();
-                        fadeout_level_music(126);
-                        m->actionArg = 0;
+                // Bowser Key or Grand Star
+                if (gCurrLevelNum == LEVEL_BOWSER_1 ||
+                    gCurrLevelNum == LEVEL_BOWSER_2 ||
+                    gCurrLevelNum == LEVEL_BOWSER_3) {
+                    starIndex = 1;
+                    m->actionArg = 0;
+                }
+
+                // Write time and ghost data if new record
+                s32 slotIndex = time_trials_get_slot_index(gCurrCourseNum, starIndex);
+                if (slotIndex != -1) {
+                    s16 t = *time_trials_time(gCurrSaveFileNum - 1, slotIndex);
+                    if (t == TIME_TRIALS_UNDEFINED_TIME || t > sTimeTrialTimer) {
+                        time_trials_write_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, starIndex);
+                        sTimeTrialHiScore = true;
+                    } else {
+                        sTimeTrialHiScore = false;
                     }
                 }
 
-                // Save the time
-                if (sTimeTrialTimerState == TT_TIMER_RUNNING) {
-                    s32 starIndex = gLastCompletedStarNum - 1;
-
-                    // Bowser Key or Grand Star
-                    if (gCurrLevelNum == LEVEL_BOWSER_1 ||
-                        gCurrLevelNum == LEVEL_BOWSER_2 ||
-                        gCurrLevelNum == LEVEL_BOWSER_3) {
-                        starIndex = 1;
-                        m->actionArg = 0;
-                    }
-
-                    // Write time and ghost data if new record
-                    s32 slotIndex = time_trials_get_slot_index(gCurrCourseNum, starIndex);
+                // All Stars
+                if (OMM_ALL_STARS) {
+                    slotIndex = time_trials_get_slot_index(gCurrCourseNum, 7);
                     if (slotIndex != -1) {
                         s16 t = *time_trials_time(gCurrSaveFileNum - 1, slotIndex);
                         if (t == TIME_TRIALS_UNDEFINED_TIME || t > sTimeTrialTimer) {
-                            time_trials_write_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, starIndex);
+                            time_trials_write_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, 7);
                             sTimeTrialHiScore = true;
                         } else {
                             sTimeTrialHiScore = false;
                         }
                     }
+                }
 
-                    // All Stars
-                    if (OMM_ALL_STARS) {
-                        slotIndex = time_trials_get_slot_index(gCurrCourseNum, 7);
-                        if (slotIndex != -1) {
-                            s16 t = *time_trials_time(gCurrSaveFileNum - 1, slotIndex);
-                            if (t == TIME_TRIALS_UNDEFINED_TIME || t > sTimeTrialTimer) {
-                                time_trials_write_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, 7);
-                                sTimeTrialHiScore = true;
-                            } else {
-                                sTimeTrialHiScore = false;
-                            }
-                        }
-                    }
-
-                    // Stop the timer if Mario leaves the course
-                    if (m->actionArg == 0) {
-                        sTimeTrialTimerState = TT_TIMER_STOPPED;
-                    }
+                // Stop the timer if Mario leaves the course
+                if (m->actionArg == 0) {
+                    sTimeTrialTimerState = TT_TIMER_STOPPED;
                 }
             }
         }
@@ -1277,7 +1275,7 @@ void time_trials_update(bool isPaused) {
         if (sTimeTrialHiScore && sTimeTrialTimerState == TT_TIMER_STOPPED) {
             time_trials_render_timer(SCREEN_HEIGHT - 24, "HI SCORE", sTimeTrialTimer, (sins(gGlobalTimer * 0x1000) * 50.f + 205.f));
         } else if (sTimeTrialTimer > 0) {
-            time_trials_render_timer(SCREEN_HEIGHT - 24, "TIME", sTimeTrialTimer, 255);
+            time_trials_render_timer(SCREEN_HEIGHT - 24, "", sTimeTrialTimer, 255);
         }
     }
 }
