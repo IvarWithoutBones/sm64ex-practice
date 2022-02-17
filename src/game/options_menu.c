@@ -59,6 +59,7 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
+    { TEXT_LEAVE_GAME },
     { TEXT_EXIT_GAME },
     { TEXT_OPT_CHEATS },
 };
@@ -207,6 +208,13 @@ static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
     if (!arg) game_exit(); // only exit on A press and not directions
 }
 
+static void optmenu_act_leave(UNUSED struct Option *self, s32 arg) {
+    if (!arg) {
+        optmenu_toggle();
+        go_to_main_menu();
+    };
+}
+
 static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
     if (!arg) {
         // Restrict reset to A press and not directions
@@ -305,9 +313,10 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[2], &menuControls ),
     DEF_OPT_SUBMENU( menuStr[3], &menuVideo ),
     DEF_OPT_SUBMENU( menuStr[4], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[5], optmenu_act_exit ),
+    DEF_OPT_BUTTON ( menuStr[5], optmenu_act_leave ),
+    DEF_OPT_BUTTON ( menuStr[6], optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[6], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[7], &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );
