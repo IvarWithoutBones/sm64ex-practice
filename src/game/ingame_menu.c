@@ -2,6 +2,7 @@
 
 #include "actors/common1.h"
 #include "area.h"
+#include "time_trials.h"
 #include "audio/external.h"
 #include "camera.h"
 #include "course_table.h"
@@ -2134,6 +2135,7 @@ void shade_screen(void) {
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 110);
     gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+    gTimeTableDisplayListHead = gDisplayListHead;
 }
 
 void print_animated_red_coin(s16 x, s16 y) {
@@ -2522,6 +2524,7 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
 
     void *courseName;
 
+    if (time_trials_render_time_table(&gDialogLineNum)) { return; }
     u8 strVal[8];
     s16 starNum = gDialogLineNum;
 
@@ -2638,7 +2641,7 @@ s16 render_pause_courses_and_castle(void) {
 /* Added support for the "Exit course at any time" cheat */
             if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                 render_pause_course_options(99, 93, &gDialogLineNum, 15);
-            }
+            } else time_trials_render_time_table(&gDialogLineNum);
 
 #ifdef VERSION_EU
             if (gPlayer3Controller->buttonPressed & (A_BUTTON | Z_TRIG | START_BUTTON))
@@ -2868,7 +2871,7 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         play_star_fanfare_and_flash_hud(1, 1 << (gLastCompletedStarNum - 1));
 
         if (gLastCompletedStarNum == 7) {
-            name = segmented_to_virtual(actNameTbl[COURSE_STAGES_MAX * 6 + 1]);
+            name = segmented_to_virtual(actNameTbl[COURSE_STAGES_MAX * 6]);
         } else {
             name = segmented_to_virtual(actNameTbl[(gLastCompletedCourseNum - 1) * 6 + gLastCompletedStarNum - 1]);
         }
@@ -3071,6 +3074,7 @@ s16 render_menus_and_dialogs() {
     s16 mode = 0;
 
     create_dl_ortho_matrix();
+    time_trials_update(gMenuMode != -1);
 
     if (gMenuMode != -1) {
         switch (gMenuMode) {
