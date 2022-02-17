@@ -1852,6 +1852,13 @@ void set_menu_mode(s16 mode) {
     }
 }
 
+void go_to_main_menu() {
+    level_set_transition(0, NULL);
+    gDialogBoxState = 0;
+    gMenuMode = -1;
+    fade_into_special_warp(-2, 0);
+}
+
 void reset_cutscene_msg_fade(void) {
     gCutsceneMsgFade = 0;
 }
