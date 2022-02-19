@@ -1062,6 +1062,9 @@ static s16 time_trials_get_x_from_center(const u8 *str64) {
 }
 
 static void time_trials_render_timer(s16 y, const char *text, s16 time, u8 colorFade) {
+    if (gHudDisplay.timer != 0)
+        return;
+
     u8 *s = time_trials_to_sm64_string(text);
     s16 x = time_trials_get_x_from_center(s);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
