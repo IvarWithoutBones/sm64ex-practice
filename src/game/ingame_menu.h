@@ -138,6 +138,7 @@ void create_dialog_box_with_var(s16 dialog, s32 dialogVar);
 void create_dialog_inverted_box(s16 dialog);
 void create_dialog_box_with_response(s16 dialog);
 void reset_dialog_render_state(void);
+void reset_dialog_render_state_instant(void);
 void set_menu_mode(s16 mode);
 void go_to_main_menu(void);
 void reset_cutscene_msg_fade(void);
