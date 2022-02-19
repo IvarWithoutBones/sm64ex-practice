@@ -10,9 +10,9 @@ extern "C" {
 
 extern s32 sBindingState;
 
-#define DYNOS_TEXT_DYNOS_MENU   { "SPEED OPTIONS",  NULL }
+#define DYNOS_TEXT_DYNOS_MENU   { "PRACTICE OPTIONS",  NULL }
 #define DYNOS_TEXT_A            { "([A]) >",     NULL }
-#define DYNOS_TEXT_OPEN_LEFT    { "[Z] Speed",   NULL }
+#define DYNOS_TEXT_OPEN_LEFT    { "[Z] Practice",   NULL }
 #define DYNOS_TEXT_CLOSE_LEFT   { "[Z] Return",  NULL }
 #define DYNOS_TEXT_OPTIONS_MENU { "OPTIONS",     NULL }
 #define DYNOS_TEXT_DISABLED     { "Disabled",    NULL }
