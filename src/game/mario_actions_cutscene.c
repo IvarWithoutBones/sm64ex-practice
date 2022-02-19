@@ -601,6 +601,9 @@ s32 act_debug_free_move(struct MarioState *m) {
 void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
     s32 dialogID;
     if (m->actionState == 0) {
+        // reset slide timer so that we can show the full level timer again
+        level_control_timer(TIMER_CONTROL_HIDE);
+
         switch (++m->actionTimer) {
             case 1:
                 spawn_object(m->marioObj, MODEL_STAR, bhvCelebrationStar);
