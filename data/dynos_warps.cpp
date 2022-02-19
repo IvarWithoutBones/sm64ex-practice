@@ -40,6 +40,8 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
         return false;
     }
 
+    gMarioState->health = 0x880;
+
     sDynosWarpLevelNum = aLevel;
     sDynosWarpAreaNum  = aArea;
     sDynosWarpActNum   = aAct;
