@@ -1066,12 +1066,18 @@ static void time_trials_render_timer(s16 y, const char *text, s16 time, u8 color
     s16 x = time_trials_get_x_from_center(s);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
-    print_hud_lut_string(HUD_LUT_GLOBAL,                x -  6, y,     s);
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 +  6, y,     time_trials_int_to_sm64_string( (time / 1800)    % 60,  "%01d"));
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 + 26, y,     time_trials_int_to_sm64_string( (time / 30)      % 60,  "%02d"));
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 + 60, y,     time_trials_int_to_sm64_string(((time * 10) / 3) % 100, "%02d"));
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 + 16, y - 8, (const u8 *) (const u8 []) { 56, 255 });
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 + 51, y - 8, (const u8 *) (const u8 []) { 57, 255 });
+
+    // Offset to be right below the star count, centered with 2 digit amount in mind
+    int x_offset = GFX_DIMENSIONS_FROM_LEFT_EDGE(SCREEN_HEIGHT / 2) - 12;
+    int y_offset = 45;
+
+    print_hud_lut_string(HUD_LUT_GLOBAL,            x - x_offset + 6,  y - y_offset,      s);
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH - x_offset + 6,  x - y_offset - 75, time_trials_int_to_sm64_string( (time / 1800)    % 60,  "%01d"));
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH - x_offset + 26, x - y_offset - 75, time_trials_int_to_sm64_string( (time / 30)      % 60,  "%02d"));
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH - x_offset + 60, x - y_offset - 75, time_trials_int_to_sm64_string(((time * 10) / 3) % 100, "%02d"));
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH - x_offset + 16, x - y_offset - 83, (const u8 *) (const u8 []) { 56, 255 });
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH - x_offset + 51, x - y_offset - 83, (const u8 *) (const u8 []) { 57, 255 });
+
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     free(s);
