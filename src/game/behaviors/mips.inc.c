@@ -8,19 +8,22 @@
  */
 void bhv_mips_init(void) {
     // Retrieve star flags for Castle Secret Stars on current save file.
-    u8 starFlags;
-    starFlags = save_file_get_star_flags(gCurrSaveFileNum - 1, -1);
+    u8 starFlags = save_file_get_star_flags(gCurrSaveFileNum - 1, -1);
 
-    // If the player has >= 15 stars and hasn't collected first MIPS star...
-    if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 24) >= 15 && (starFlags & 0x08) == 0) {
+    // Total amount of stars collected on current save file.
+    u8 collectedStarsNum = save_file_get_total_star_count(gCurrSaveFileNum -1, 0, 24);
+
+    // TODO: make config option to spawn mips if star has already been collected
+    //
+    // Spawn first mips if we have 15 or more stars, and less than 50 or the first star hasn't been collected
+    if ((collectedStarsNum >= 15 && collectedStarsNum < 50) || ((starFlags & 0x08) == 0) && collectedStarsNum >= 15) {
         o->oBehParams2ndByte = 0;
 #ifndef VERSION_JP
         o->oMipsForwardVelocity = 40.0f;
 #endif
     }
-    // If the player has >= 50 stars and hasn't collected second MIPS star...
-    else if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 24) >= 50
-             && (starFlags & 0x10) == 0) {
+    // TODO: make config option to spawn mips if star has already been collected
+    else if (collectedStarsNum >= 50) { // && (starFlags & 0x10) == 0) {
         o->oBehParams2ndByte = 1;
 #ifndef VERSION_JP
         o->oMipsForwardVelocity = 45.0f;
