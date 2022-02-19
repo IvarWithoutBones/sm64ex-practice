@@ -997,9 +997,8 @@ Gfx *gTimeTableDisplayListHead;
 static bool sSetIndexToCurrentCourse = false;
 extern void create_dl_rotation_matrix(s8 pushOp, f32 a, f32 x, f32 y, f32 z);
 bool time_trials_render_time_table(s8 *index) {
-    if (!sTimeTrialsEnabled) {
+    if (!sTimeTrialsEnabled || gCurrCourseNum != COURSE_NONE)
         return false;
-    }
 
     // Handle menu scrolling
     static s8 sCastleHubCurrentCourse = 0;
@@ -1017,7 +1016,7 @@ bool time_trials_render_time_table(s8 *index) {
 
     // Render the colorful "PAUSE"
     gDisplayListHead = gTimeTableDisplayListHead;
-    u8 *pause = time_trials_to_sm64_string("TIME TRIALS");
+    u8 *pause = time_trials_to_sm64_string("");
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - 64, 8, pause);
