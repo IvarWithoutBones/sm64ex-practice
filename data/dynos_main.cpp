@@ -10,6 +10,8 @@ extern s8 gDialogBoxState;
 #ifdef OMM_DEFINES_H
 extern void omm_opt_init();
 #endif
+
+#include "game/game_init.h"
 }
 
 //
@@ -47,6 +49,11 @@ void DynOS_UpdateOpt(void *aPad) {
     }
     DynOS_Opt_Update((OSContPad *) aPad);
     gPrevFrameObjectCount = 0;
+
+    // TODO: set this binding properly, make configurable
+    if (gPlayer1Controller->buttonDown & 0x0010 && gPlayer1Controller->buttonDown & 0x0020) {
+        DynOS_Warp_RestartLevel();
+    };
 }
 
 void *DynOS_UpdateCmd(void *aCmd) {
