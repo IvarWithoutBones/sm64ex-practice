@@ -43,6 +43,9 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
     gMarioState->health = 0x880;
     gHudDisplay.timer = 0; // reset so that we can enable our own timer
 
+    // Without this we softlock when restarting level while a dialog is open
+    reset_dialog_render_state();
+
     sDynosWarpLevelNum = aLevel;
     sDynosWarpAreaNum  = aArea;
     sDynosWarpActNum   = aAct;
@@ -50,6 +53,7 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
 }
 
 bool DynOS_Warp_RestartLevel() {
+    reset_dialog_render_state_instant(); // Instantly close the current dialog
     return DynOS_Warp_ToLevel(gCurrLevelNum, 1, gCurrActNum);
 }
 

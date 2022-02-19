@@ -952,6 +952,18 @@ void reset_dialog_render_state(void) {
     gDialogResponse = 0;
 }
 
+void reset_dialog_render_state_instant(void) {
+    gDialogBoxScale = 0.0f;
+    gDialogBoxOpenTimer = 0.0f;
+
+    gDialogBoxState = DIALOG_STATE_CLOSING;
+    gDialogID = -1;
+    gDialogTextPos = 0;
+    gLastDialogResponse = 0;
+    gLastDialogPageStrPos = 0;
+    gDialogResponse = 0;
+};
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #define X_VAL1 -5.0f
 #define Y_VAL1 2.0
