@@ -1,15 +1,29 @@
-# sm64ex
-Fork of [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) with additional features. 
+# sm64ex practice mod
+Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) with additional speedrun practicing features.
+
+Made possible by the existing patches DynOS and time-trials, huge thank you to it's creators.
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
 Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
 
-Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm64ex/tree/nightly/). New functionality will be merged to master once they're considered to be well-tested.
+## Pratice mod features
+ * Timer for all courses
+ * Leaderboard of best times for each star
+ * Real-time ghost replay of best time for each star
+ * Instantly restart level by pressing L+R
+ * Warp to level
+ * Warp to castle
+ * Always spawn Mips if you have >= 15 stars
+ * Always make cap unlock boxes pressable
 
-*Read this in other languages: [Español](README_es_ES.md), [Português](README_pt_BR.md), [简体中文](README_zh_CN.md) or [Bahasa Melayu](README_ms_MY.md).*
+## To-do list
+ * Make all options effecting gameplay configurable
+ * When warping directly to a subarea, the timer gets stuck
+ * Cannot restart a specific subarea
+ * Mario cannot fly in the ending cutscene
+ * Restart castle movement (return to last level exit)
 
-## New features
-
+## sm64ex features
  * Options menu with various settings, including button remapping.
  * Optional external data loading (so far only textures and assembled soundbanks), providing support for custom texture packs.
  * Optional analog camera and mouse look (using [Puppycam](https://github.com/FazanaJ/puppycam)).
