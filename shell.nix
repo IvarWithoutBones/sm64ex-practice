@@ -11,4 +11,6 @@ pkgs.mkShell {
     SDL2
     audiofile
   ];
+
+  NIX_LDFLAGS = [ "-lstdc++" ];
 }
