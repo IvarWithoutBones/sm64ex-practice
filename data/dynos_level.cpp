@@ -335,7 +335,7 @@ const u8 *DynOS_Level_GetAreaName(s32 aLevel, s32 aArea, bool aDecaps) {
         { "MAIN AREA", "IGLOO", "NOT AVAILABLE", "NOT AVAILABLE" }, /* SL */
         { "MAIN AREA", "DOWNTOWN", "NOT AVAILABLE", "NOT AVAILABLE" }, /* WDW */
         { "MAIN AREA", "SECRET SLIDE", "NOT AVAILABLE", "NOT AVAILABLE" }, /* TTM */
-        { "HUGE ISLAND", "TINY ISLAND", "WIGGLER'S ROOM", "NOT AVAILABLE" }, /* THI */
+        { "TINY ISLAND", "HUGE ISLAND", "WIGGLER'S ROOM", "NOT AVAILABLE" }, /* THI */
         { "MAIN AREA", "NOT AVAILABLE", "NOT AVAILABLE", "NOT AVAILABLE" }, /* TTC */
         { "MAIN AREA", "NOT AVAILABLE", "NOT AVAILABLE", "NOT AVAILABLE" }, /* RR */
         { "MAIN AREA", "NOT AVAILABLE", "NOT AVAILABLE", "NOT AVAILABLE" }, /* BITDW */

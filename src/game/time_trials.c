@@ -1183,24 +1183,6 @@ void time_trials_update(bool isPaused) {
                 if (OMM_STARS_NON_STOP && gCurrCourseNum >= COURSE_BOB && gCurrCourseNum <= COURSE_RR) {
                     starIndex = 7;
                 }
-                s32 slotIndex = time_trials_get_slot_index(gCurrCourseNum, starIndex);
-                time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, starIndex, slotIndex, sTimeTrialGhostDataR1);
-                sGhostAnimData1.color = (starIndex == 7 ? GHOST_MARIO_ALL_STARS : GHOST_MARIO_DEFAULT);
-                sGhostAnimData1.prevValidAnimIndex = 0xFFFF;
-
-                // Special ghost
-                // Bowser Red coins (red)
-                // PSS 2 (green)
-                // 100 coins (gold)
-                s32 specialIndex = time_trials_get_special_ghost_data_to_load(gCurrCourseNum);
-                if (specialIndex != -1) {
-                    slotIndex = time_trials_get_slot_index(gCurrCourseNum, specialIndex);
-                    time_trials_read_ghost_data(gCurrSaveFileNum - 1, gCurrCourseNum - 1, specialIndex, slotIndex, sTimeTrialGhostDataR2);
-                    if (specialIndex == 0) sGhostAnimData2.color = GHOST_MARIO_RED_COINS;
-                    if (specialIndex == 1) sGhostAnimData2.color = GHOST_MARIO_PSS_2;
-                    if (specialIndex == 6) sGhostAnimData2.color = GHOST_MARIO_100_COINS;
-                    sGhostAnimData2.prevValidAnimIndex = 0xFFFF;
-                }
 
                 sLoadedSvFileNum = gCurrSaveFileNum;
                 sLoadedCourseNum = gCurrCourseNum;
@@ -1216,15 +1198,6 @@ void time_trials_update(bool isPaused) {
             m->action == ACT_FALL_AFTER_STAR_GRAB ||
             m->action == ACT_JUMBO_STAR_CUTSCENE) {
 
-            // Force Mario to leave the course if he collects a main course star
-            // Ignore this if OMM Non-Stop mode is enabled
-            if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_STAGES_MAX) {
-                if (!OMM_STARS_NON_STOP || OMM_ALL_STARS) {
-                    drop_queued_background_music();
-                    fadeout_level_music(126);
-                    m->actionArg = 0;
-                }
-            }
 
             // Save the time
             if (sTimeTrialTimerState == TT_TIMER_RUNNING) {

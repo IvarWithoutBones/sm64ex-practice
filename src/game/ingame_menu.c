@@ -2968,70 +2968,6 @@ void render_course_complete_lvl_info_and_hud_str(void) {
 #define TXT_CONTNOSAVE_Y 60
 #endif
 
-#ifdef VERSION_EU
-#define X_VAL9 xOffset - 12
-void render_save_confirmation(s16 y, s8 *index, s16 sp6e)
-#else
-#define X_VAL9 x
-void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
-#endif
-{
-#ifdef VERSION_EU
-    u8 textSaveAndContinueArr[][24] = {
-        { TEXT_SAVE_AND_CONTINUE },
-        { TEXT_SAVE_AND_CONTINUE_FR },
-        { TEXT_SAVE_AND_CONTINUE_DE }
-    };
-    u8 textSaveAndQuitArr[][22] = {
-        { TEXT_SAVE_AND_QUIT },
-        { TEXT_SAVE_AND_QUIT_FR },
-        { TEXT_SAVE_AND_QUIT_DE }
-    };
-
-    u8 textSaveExitGame[][26] = { // New function to exit game
-        { TEXT_SAVE_EXIT_GAME },
-        { TEXT_SAVE_EXIT_GAME_FR },
-        { TEXT_SAVE_EXIT_GAME_DE }
-    };
-
-    u8 textContinueWithoutSaveArr[][27] = {
-        { TEXT_CONTINUE_WITHOUT_SAVING },
-        { TEXT_CONTINUE_WITHOUT_SAVING_FR },
-        { TEXT_CONTINUE_WITHOUT_SAVING_DE }
-    };
-
-#define textSaveAndContinue textSaveAndContinueArr[gInGameLanguage]
-#define textSaveAndQuit textSaveAndQuitArr[gInGameLanguage]
-#define textSaveExitGame textSaveExitGame[gInGameLanguage]
-#define textContinueWithoutSave textContinueWithoutSaveArr[gInGameLanguage]
-    s16 xOffset = get_str_x_pos_from_center(160, textContinueWithoutSaveArr[gInGameLanguage], 12.0f);
-#else
-    u8 textSaveAndContinue[] = { TEXT_SAVE_AND_CONTINUE };
-    u8 textSaveAndQuit[] = { TEXT_SAVE_AND_QUIT };
-    u8 textSaveExitGame[] = { TEXT_SAVE_EXIT_GAME };
-    u8 textContinueWithoutSave[] = { TEXT_CONTINUE_WITHOUT_SAVING };
-#endif
-
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game 
-
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-
-    print_generic_string(TXT_SAVEOPTIONS_X, y + TXT_SAVECONT_Y, textSaveAndContinue);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVEQUIT_Y, textSaveAndQuit);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVE_EXIT_GAME_Y, textSaveExitGame);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_CONTNOSAVE_Y, textContinueWithoutSave);
-
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-
-    create_dl_translation_matrix(MENU_MTX_PUSH, X_VAL9, y - ((index[0] - 1) * sp6e), 0);
-
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-    gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
-
-    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-}
-
 s16 render_course_complete_screen(void) {
     s16 num;
 #ifdef VERSION_EU
@@ -3051,32 +2987,18 @@ s16 render_course_complete_screen(void) {
         case DIALOG_STATE_VERTICAL:
             shade_screen();
             render_course_complete_lvl_info_and_hud_str();
-#ifdef VERSION_EU
-            render_save_confirmation(86, &gDialogLineNum, 20);
-#else
-            render_save_confirmation(100, 86, &gDialogLineNum, 20);
-#endif
 
-            if (gCourseDoneMenuTimer > 110
-                && (gPlayer3Controller->buttonPressed & A_BUTTON
-                 || gPlayer3Controller->buttonPressed & START_BUTTON
-#ifdef VERSION_EU
-                 || gPlayer3Controller->buttonPressed & Z_TRIG
-#endif
-                )) {
-                level_set_transition(0, 0);
-                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
-                gDialogBoxState = DIALOG_STATE_OPENING;
-                gMenuMode = -1;
-                num = gDialogLineNum;
-                gCourseDoneMenuTimer = 0;
-                gCourseCompleteCoins = 0;
-                gCourseCompleteCoinsEqual = 0;
-                gHudFlash = 0;
-
-                return num;
-            }
-            break;
+            // Skip the save confirmation dialog
+            level_set_transition(0, 0);
+            play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+            gDialogBoxState = DIALOG_STATE_OPENING;
+            gMenuMode = -1;
+            num = gDialogLineNum;
+            gCourseDoneMenuTimer = 0;
+            gCourseCompleteCoins = 0;
+            gCourseCompleteCoinsEqual = 0;
+            gHudFlash = 0;
+            return num;
     }
 
     if (gDialogTextAlpha < 250) {
