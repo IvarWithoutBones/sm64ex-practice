@@ -225,63 +225,14 @@ static void stub_is_textbox_active(u16 *a0) {
     }
 }
 
-/**
- * get_star_collection_dialog: Determine what dialog should show when Mario
- * collects a star.
- * Determines if Mario has collected enough stars to get a dialog for it, and
- * if so, return the dialog ID. Otherwise, return 0. A dialog is returned if
- * numStars has reached a milestone and prevNumStarsForDialog has not reached it.
- */
-s32 get_star_collection_dialog(struct MarioState *m) {
-    s32 i;
-    s32 dialogID = 0;
-    s32 numStarsRequired;
-
-    for (i = 0; i < 6; i++) {
-        numStarsRequired = sStarsNeededForDialog[i];
-        if (m->prevNumStarsForDialog < numStarsRequired && m->numStars >= numStarsRequired) {
-            dialogID = i + DIALOG_141;
-            break;
-        }
-    }
-
-    m->prevNumStarsForDialog = m->numStars;
-    return dialogID;
-}
-
 // save menu handler
 void handle_save_menu(struct MarioState *m) {
-    s32 dialogID;
-    // wait for the menu to show up
-    if (is_anim_past_end(m) && gSaveOptSelectIndex != 0) {
-        // save and continue / save and quit
-        if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_CONTINUE || gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME || gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
-            save_file_do_save(gCurrSaveFileNum - 1);
+    // Skip the confirmation dialog and assume "SAVE_OPT_SAVE_AND_CONTINUE"
+    save_file_do_save(gCurrSaveFileNum - 1);
 
-            if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
-                fade_into_special_warp(-2, 0); // reset game
-            } else if (gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME) {
-                //initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
-                fade_into_special_warp(0, 0);
-                game_exit();
-            }
-        }
-
-        // not quitting
-        if (gSaveOptSelectIndex != SAVE_OPT_SAVE_EXIT_GAME) {
-            disable_time_stop();
-            m->faceAngle[1] += 0x8000;
-            // figure out what dialog to show, if we should
-            dialogID = get_star_collection_dialog(m);
-            if (dialogID != 0) {
-                play_peachs_jingle();
-                // look up for dialog
-                set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, dialogID);
-            } else {
-                set_mario_action(m, ACT_IDLE, 0);
-            }
-        }
-    }
+    disable_time_stop();
+    m->faceAngle[1] += 0x8000;
+    set_mario_action(m, ACT_IDLE, 0);
 }
 
 /**
@@ -599,7 +550,6 @@ s32 act_debug_free_move(struct MarioState *m) {
 
 // star dance handler
 void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
-    s32 dialogID;
     if (m->actionState == 0) {
         // reset slide timer so that we can show the full level timer again
         level_control_timer(TIMER_CONTROL_HIDE);
@@ -641,13 +591,8 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
     } else if (m->actionState == 2 && is_anim_at_end(m)) {
         disable_time_stop();
         enable_background_sound();
-        dialogID = get_star_collection_dialog(m);
-        if (dialogID != 0) {
-            // look up for dialog
-            set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, dialogID);
-        } else {
-            set_mario_action(m, isInWater ? ACT_WATER_IDLE : ACT_IDLE, 0);
-        }
+        // Skip the periodic dialogs after a star is collected
+        set_mario_action(m, isInWater ? ACT_WATER_IDLE : ACT_IDLE, 0);
     }
 }
 

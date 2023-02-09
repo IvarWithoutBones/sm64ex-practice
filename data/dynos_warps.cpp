@@ -46,6 +46,15 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
     // Without this we softlock when restarting level while a dialog is open
     reset_dialog_render_state();
 
+    // Ugly hack to make the the tiny island the default
+    if (aLevel == LEVEL_THI) {
+        if (aArea == 1) {
+            aArea = 2;
+        } else if (aArea == 2) {
+            aArea = 1;
+        }
+    }
+
     sDynosWarpLevelNum = aLevel;
     sDynosWarpAreaNum  = aArea;
     sDynosWarpActNum   = aAct;
@@ -53,8 +62,14 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
 }
 
 bool DynOS_Warp_RestartLevel() {
+    // Ugly hack to stay inside of the vulcano in LLL
+    s32 area = 1;
+    if (gCurrLevelNum == LEVEL_LLL && gCurrAreaIndex == 2) {
+        area = 2;
+    }
+
     reset_dialog_render_state_instant(); // Instantly close the current dialog
-    return DynOS_Warp_ToLevel(gCurrLevelNum, 1, gCurrActNum);
+    return DynOS_Warp_ToLevel(gCurrLevelNum, area, gCurrActNum);
 }
 
 //
