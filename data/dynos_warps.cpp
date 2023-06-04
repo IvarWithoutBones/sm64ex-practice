@@ -55,6 +55,11 @@ bool DynOS_Warp_ToLevel(s32 aLevel, s32 aArea, s32 aAct) {
         }
     }
 
+    // Ugly hack to always play the manta ray star in DDD
+    if (aLevel == LEVEL_DDD) {
+        aAct = 4;
+    }
+
     sDynosWarpLevelNum = aLevel;
     sDynosWarpAreaNum  = aArea;
     sDynosWarpActNum   = aAct;
@@ -172,10 +177,11 @@ void DynOS_Warp_SetParam(s32 aLevel, s32 aIndex) {
     switch (aLevel) {
     case LEVEL_DDD:
         switch (aIndex) {
-            case 1: gDDDBowsersSub = 0; gDDDPoles = 0; break;
-            case 2: gDDDBowsersSub = 1; gDDDPoles = 0; break;
-            case 3: gDDDBowsersSub = 0; gDDDPoles = 1; break;
-            case 4: gDDDBowsersSub = 1; gDDDPoles = 1; break;
+            // Ugly hack to alway spawn in the submarine in DDD
+            case 1:
+            case 2:
+            case 3:
+            case 4: gDDDBowsersSub = 1; gDDDPoles = 0; break;
         }
         break;
 
