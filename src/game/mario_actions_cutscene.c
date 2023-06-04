@@ -2622,7 +2622,7 @@ s32 mario_execute_cutscene_action(struct MarioState *m) {
         case ACT_SPECIAL_DEATH_EXIT:         cancel = act_special_death_exit(m);         break;
         case ACT_FALLING_EXIT_AIRBORNE:      cancel = act_falling_exit_airborne(m);      break;
         case ACT_UNLOCKING_KEY_DOOR:         cancel = act_unlocking_key_door(m);         break;
-        case ACT_UNLOCKING_STAR_DOOR:        cancel = act_unlocking_star_door(m);        break;
+        case ACT_UNLOCKING_STAR_DOOR:        // Fall through and just open the door, we dont want to see the cutscene.
         case ACT_ENTERING_STAR_DOOR:         cancel = act_entering_star_door(m);         break;
         case ACT_SPAWN_NO_SPIN_AIRBORNE:     cancel = act_spawn_no_spin_airborne(m);     break;
         case ACT_SPAWN_NO_SPIN_LANDING:      cancel = act_spawn_no_spin_landing(m);      break;

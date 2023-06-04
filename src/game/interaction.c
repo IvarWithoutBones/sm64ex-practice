@@ -903,8 +903,6 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
                 return FALSE;
             }
-
-            doorAction = ACT_UNLOCKING_KEY_DOOR;
         }
 
         if (warpDoorId == 2 && !(saveFlags & SAVE_FLAG_UNLOCKED_BASEMENT_DOOR)) {
@@ -918,8 +916,6 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
                 return FALSE;
             }
-
-            doorAction = ACT_UNLOCKING_KEY_DOOR;
         }
 
         if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
