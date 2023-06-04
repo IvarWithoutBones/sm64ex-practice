@@ -1,3 +1,6 @@
+# NOTE: To generate a `compile_commands.json` for the clangd LSP run:
+# $ nix run nixpkgs#python3Packages.compiledb -- -- make -j
+
 {
   description = "A Super Mario 64 PC port hack with speedrun practicing features.";
 
@@ -93,7 +96,7 @@
         { };
 
       mkRegion = region:
-        let
+        sm64ex-practice.override {
           rom = {
             inherit region;
 
@@ -118,8 +121,7 @@
               }.${region} or (throw "sm64ex-practice: invalid region '${region}'");
             };
           };
-        in
-        sm64ex-practice.override { inherit rom; };
+        };
 
       sm64ex-practice-us = mkRegion "us";
       sm64ex-practice-jp = mkRegion "jp";
