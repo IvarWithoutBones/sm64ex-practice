@@ -30,8 +30,9 @@
          , python3
          , SDL2
          , audiofile
+         , libGL
          , requireFile
-         , rom ? throw "sm64ex-practice: no ROM specified, unable to build"
+         , rom ? { region = "us"; file = null; }
          }:
           stdenv.mkDerivation {
             pname = "sm64ex-practice";
@@ -54,6 +55,7 @@
             buildInputs = [
               SDL2
               audiofile
+              libGL
             ];
 
             makeFlags = [ "VERSION=${rom.region}" ];
