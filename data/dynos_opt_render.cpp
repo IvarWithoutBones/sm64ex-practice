@@ -226,7 +226,7 @@ static void DynOS_Opt_DrawOption(DynosOption *aOpt, DynosOption *aCurrentOpt, s3
         } break;
 
         case DOPT_BIND: {
-            for (s32 i = 0; i != 3; ++i) {
+            for (s32 i = 0; i != 6; ++i) {
                 u32 _Bind = aOpt->mBind.mBinds[i];
                 if (aOpt == aCurrentOpt && i == aOpt->mBind.mIndex) {
                     if (sBindingState != 0) {

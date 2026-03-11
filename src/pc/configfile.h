@@ -5,7 +5,7 @@
 
 #define CONFIGFILE_DEFAULT "sm64config.txt"
 
-#define MAX_BINDS  3
+#define MAX_BINDS  6
 #define MAX_VOLUME 127
 
 typedef struct {
