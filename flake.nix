@@ -14,18 +14,25 @@
       nixpkgs,
     }:
     let
-      forEachSystem =
-        f:
-        nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (
-          system:
-          let
-            pkgs = import nixpkgs {
-              inherit system;
-              config.allowUnfreePredicate = pkg: (nixpkgs.lib.getName pkg) == "sm64ex-practice";
-            };
-          in
-          f pkgs
-        );
+      forEachSystem = f: nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (sys: f (mkPkgs sys));
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system;
+          overlays = [ self.overlays.default ];
+
+          config.allowUnfreePredicate =
+            pkg:
+            let
+              name = nixpkgs.lib.getName pkg;
+            in
+            name == "sm64ex-practice-us"
+            || name == "sm64ex-practice-jp"
+            || name == "sm64ex-practice-eu"
+            || name == "baserom.us.z64"
+            || name == "baserom.jp.z64"
+            || name == "baserom.eu.z64";
+        };
 
       sm64ex-practice =
         {
@@ -43,7 +50,7 @@
           },
         }:
         stdenv.mkDerivation {
-          pname = "sm64ex-practice";
+          pname = "sm64ex-practice-${rom.region}";
           version =
             let
               year = lib.substring 0 4 self.lastModifiedDate;
@@ -82,7 +89,7 @@
             runHook preInstall
 
             mkdir -p $out/bin
-            cp build/${rom.region}_pc/sm64.${rom.region}.f3dex2e $out/bin/sm64ex-practice
+            cp build/${rom.region}_pc/sm64.${rom.region}.f3dex2e $out/bin/sm64ex-practice-${rom.region}
 
             runHook postInstall
           '';
@@ -98,7 +105,7 @@
               as this contains copyrighted assets. If your copy of the game is from another region you must
               choose the corresponding package from this flake.
             '';
-            mainProgram = "sm64ex-practice";
+            mainProgram = "sm64ex-practice-${rom.region}";
             license = licenses.unfree;
             platforms = platforms.linux;
           };
@@ -136,11 +143,15 @@
         };
     in
     {
+      overlays.default = final: prev: {
+        sm64ex-practice-us = mkRegion final "us";
+        sm64ex-practice-jp = mkRegion final "jp";
+        sm64ex-practice-eu = mkRegion final "eu";
+      };
+
       packages = forEachSystem (pkgs: {
-        default = self.packages.${pkgs.stdenv.hostPlatform.system}.sm64ex-practice-us;
-        sm64ex-practice-us = mkRegion pkgs "us";
-        sm64ex-practice-jp = mkRegion pkgs "jp";
-        sm64ex-practice-eu = mkRegion pkgs "eu";
+        default = pkgs.sm64ex-practice-us;
+        inherit (pkgs) sm64ex-practice-us sm64ex-practice-jp sm64ex-practice-eu;
       });
     };
 }
