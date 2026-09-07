@@ -206,9 +206,11 @@ u16 level_control_timer(s32 timerOp) {
 }
 
 u32 pressed_pause(void) {
-    u32 val4 = get_dialog_id() >= 0;
+    // Allow pausing if the save dialog is open after collecting a star.
+    const u32 dialogId = get_dialog_id();
+    const u32 val4 = dialogId != DIALOG_014 || dialogId < 0;
 
-    if (!val4 && !gWarpTransition.isActive && sDelayedWarpOp == WARP_OP_NONE
+    if (val4 && !gWarpTransition.isActive && sDelayedWarpOp == WARP_OP_NONE
         && (gPlayer1Controller->buttonPressed & START_BUTTON)) {
         return TRUE;
     }
